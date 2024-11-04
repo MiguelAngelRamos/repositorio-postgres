@@ -6,16 +6,16 @@ CREATE TABLE pacientes (
     telefono VARCHAR(15)
 );
 
+CREATE TABLE especialidades (
+    especialidad_id SERIAL PRIMARY KEY,
+    especialidad_nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
 CREATE TABLE medicos (
     medico_id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     especialidad_id INT REFERENCES especialidades(especialidad_id),
     fecha_ingreso DATE NOT NULL
-);
-
-CREATE TABLE especialidades (
-    especialidad_id SERIAL PRIMARY KEY,
-    especialidad_nombre VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE citas (
