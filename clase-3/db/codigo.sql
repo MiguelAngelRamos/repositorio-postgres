@@ -150,3 +150,33 @@ INSERT INTO tratamientos (cita_id, tratamiento_nombre, dosis, duracion_dias, fec
 (18, 'Suplementos de hierro', 'Una diaria', 30, '2024-11-27'),
 (19, 'Antihistamínicos', 'Una cada 12 horas', 10, '2024-11-28'),
 (20, 'Antibiótico tópico', 'Aplicar en zona afectada', 7, '2024-11-29');
+
+
+-- Citas en Septiembre de 2024
+INSERT INTO citas (paciente_id, medico_id, fecha, duracion, estado) VALUES
+(1, 1, '2024-09-10 09:00:00', INTERVAL '30 minutes', 'Realizada'),
+(2, 3, '2024-09-12 10:30:00', INTERVAL '30 minutes', 'Pendiente'),
+(3, 5, '2024-09-15 11:00:00', INTERVAL '45 minutes', 'Cancelada'),
+(4, 6, '2024-09-18 13:00:00', INTERVAL '30 minutes', 'Realizada');
+
+-- Citas en Octubre de 2024
+INSERT INTO citas (paciente_id, medico_id, fecha, duracion, estado) VALUES
+(5, 7, '2024-10-05 09:30:00', INTERVAL '30 minutes', 'Realizada'),
+(6, 8, '2024-10-10 11:15:00', INTERVAL '30 minutes', 'Pendiente'),
+(7, 9, '2024-10-15 14:00:00', INTERVAL '30 minutes', 'Cancelada'),
+(8, 10, '2024-10-20 16:00:00', INTERVAL '45 minutes', 'Realizada');
+
+-- Citas en Diciembre de 2024
+INSERT INTO citas (paciente_id, medico_id, fecha, duracion, estado) VALUES
+(9, 11, '2024-12-01 08:30:00', INTERVAL '30 minutes', 'Pendiente'),
+(10, 12, '2024-12-05 09:45:00', INTERVAL '45 minutes', 'Realizada'),
+(11, 13, '2024-12-10 12:00:00', INTERVAL '30 minutes', 'Cancelada'),
+(12, 14, '2024-12-15 13:30:00', INTERVAL '30 minutes', 'Pendiente');
+
+-- Citas en Enero de 2025
+INSERT INTO citas (paciente_id, medico_id, fecha, duracion, estado) VALUES
+(13, 15, '2025-01-05 10:00:00', INTERVAL '30 minutes', 'Realizada'),
+(14, 16, '2025-01-10 11:30:00', INTERVAL '30 minutes', 'Pendiente'),
+(15, 17, '2025-01-15 14:30:00', INTERVAL '30 minutes', 'Cancelada'),
+(16, 18, '2025-01-20 15:45:00', INTERVAL '30 minutes', 'Realizada');
+   
