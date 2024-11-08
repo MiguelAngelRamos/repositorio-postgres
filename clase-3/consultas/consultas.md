@@ -113,4 +113,27 @@ group by
 	date_trunc ('month', fecha)
 order by
 	mes;
+  
+-- Obtener las Citas canceladas por mes obtener el nombre del paciente y nombre medico (especialidad)
+select
+	to_char(date_trunc('month', fecha), 'YYYY-MM') as mes,
+	p.nombre as nombre_paciente,
+	m.nombre as nombre_medico,
+	e.especialidad_nombre as especialidad_medico,
+	count (*) as total_citas
+from
+	citas c
+inner join
+	pacientes p on c.paciente_id = p.paciente_id 
+inner join 
+	medicos m on c.medico_id = m.medico_id 
+inner join 
+    especialidades e on m.especialidad_id = e.especialidad_id 
+where
+	estado = 'Cancelada'
+group by
+	date_trunc ('month', fecha), p.nombre, m.nombre, e.especialidad_nombre
+order by
+	mes;
+
 ```
