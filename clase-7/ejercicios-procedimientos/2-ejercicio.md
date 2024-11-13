@@ -53,3 +53,60 @@ INSERT INTO proyectos (nombre, cupos_disponibles) VALUES
 ('Proyecto Beta', 30),
 ('Proyecto Gamma', 10);
 ```
+
+```sql
+--- Creamos un procedimiento que implemente la lógica de asignación cumpliendo con la restricción de máximo 2 proyectos por empleado, además de verificar duplicados y cupos disponibles.
+ 
+create or replace procedure asignar_empleado(p_empleado_id int, p_proyecto_id int)
+language plpgsql
+as $$
+declare
+	asignaciones int;
+	duplicados int;
+	cupos int;
+begin
+	--- Verificar si el empleado ya tiene 2 proyectos
+	select count(*) into asignaciones from asignaciones where empleado_id = p_empleado_id;
+ 
+	if asignaciones >= 2 then
+		raise notice 'El empleado % ya está asignado a 2 proyectos como máximo.', p_empleado_id;
+    return;
+	end if;
+ 
+	-- Verificar duplicados
+	select count(*) into duplicados from asignaciones where empleado_id = p_empleado_id and proyecto_id = p_proyecto_id;	
+	
+	if duplicados >0 then
+		raise notice 'El empleado % ya está asignado al proyecto %.', p_empleado_id, p_proyecto_id;
+		return; -- Se sale del procedimiento
+	end if;
+	
+	-- Verificar cupos disponibles
+	select cupos_disponibles into cupos from proyectos where proyecto_id = p_proyecto_id;
+ 
+	if cupos <=0 then
+		raise notice 'No hay cupos disponibles para el proyecto %.', p_proyecto_id;
+		return;
+	end if;
+ 
+	-- Ingreso de la asignación de empleado al proyecto
+	insert into asignaciones (empleado_id, proyecto_id) values (p_empleado_id, p_proyecto_id);
+	
+	-- Actualizar cupos disponibles del proyecto
+	update proyectos set cupos_disponibles = cupos_disponibles - 1 where proyecto_id = p_proyecto_id;
+ 
+	-- Mensaje de Exito
+	raise notice 'Asignación exitosa para el empleado % en el proyecto %', p_empleado_id, p_proyecto_id;
+ 
+exception
+	when others then
+	raise notice 'Error inesperado al realizar la asignación en procedimiento.';
+	raise;
+end;
+$$;
+```
+
+```sql
+
+
+

@@ -88,4 +88,5 @@ $$;
 select * from cursos;
 call inscribir_estudiante(1,2);
 
+
 ```
