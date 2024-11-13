@@ -29,3 +29,24 @@ INSERT INTO ventas (cliente_id, monto) VALUES
 (1, 200.75),  -- Venta del cliente 1
 (2, 300.00);  -- Venta del cliente 2
 ```
+
+## Ejemplo  de store produce 
+
+```sql
+create or replace procedure obtener_total_ventas(p_cliente_id int, out total_ventas decimal)
+language plpgsql
+as $$
+	begin
+		select coalesce(sum(monto), 0) into total_ventas from ventas where cliente_id = p_cliente_id;
+    end;
+$$;
+
+do $$
+declare 
+   resultado decimal;
+begin
+	call obtener_total_ventas(1, resultado);
+    raise notice 'El total de ventas del cliente es %', resultado;
+end;
+$$
+```
