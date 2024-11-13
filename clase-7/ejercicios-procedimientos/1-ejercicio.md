@@ -48,3 +48,44 @@ INSERT INTO cursos (nombre, cupos_disponibles) VALUES
 ('Arte', 2);
 
 ```
+
+```sql
+create or replace procedure inscribir_estudiante(p_estudiante_id INT, p_curso_id INT)
+language plpgsql
+as $$
+declare
+	cupos INT;
+    inscrito INT;
+begin
+	-- Verificar si el estudiante ya está inscrito en algun curso
+      select count(*) into inscrito from inscripciones where estudiante_id = p_estudiante_id AND curso_id = p_curso_id;
+	  
+      if inscrito > 0 THEN
+        raise notice 'El estudiante % ya está inscrito en el curso %', p_estudiante_id, p_curso_id;
+        return; -- Se salga del procedimiento
+      end if;
+      -- Obtener el numero de cupos disponible del curso
+      select cupos_disponibles into cupos from cursos where curso_id = p_curso_id;
+
+      if cupos <= 0 then
+         raise notice 'No hay cupos disponibles para el curso %', p_curso_id;
+         return;
+      end if;
+     
+      -- Registramos la inscripción
+      insert into inscripciones (estudiante_id, curso_id) values (p_estudiante_id, p_curso_id);
+      -- Actualizar el cupo del curso
+      update cursos set cupos_disponibles = cupos_disponibles - 1 where curso_id = p_curso_id;
+      -- Mensaje de Exito
+      raise notice 'Inscripción exitosa para el estudiante % en el curso %', p_estudiante_id, p_curso_id;
+exception 
+      when others then
+      raise notice 'Error inesperado al realizar la inscripcion en procedimiento';
+      raise;
+end;
+$$;
+
+select * from cursos;
+call inscribir_estudiante(1,2);
+
+```
