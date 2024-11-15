@@ -50,3 +50,28 @@ Implementar una solución en PostgreSQL que:
 
 7. **Procedimiento de Login con Manejo de Excepciones**:
    - En el procedimiento `user_login`, manejar los casos en los que el usuario no existe o la actualización de `last_login` falla. En caso de error inesperado, registrar un mensaje de advertencia y permitir una futura auditoría del problema.
+
+
+   ```sql
+    -- Crear la tabla de usuarios
+    create table "user" (
+      id serial primary key,              -- Columna de ID que se incrementa automáticamente y actúa como clave primaria
+      username varchar(50) unique not null, -- Nombre de usuario único y obligatorio
+      password text not null,              -- Contraseña en texto, obligatorio
+      last_login timestamp default current_timestamp -- Fecha y hora del último inicio de sesión, con un valor predeterminado actual
+    );
+
+    -- Crear una tabla para registrar intentos fallidos de inicio de sesión
+    create table session_failed (
+      id serial primary key,        -- ID único y autoincremental para cada intento fallido
+      username varchar(50) not null, -- Nombre de usuario del intento fallido, obligatorio
+      "when" timestamp               -- Fecha y hora del intento fallido
+    );
+
+    -- Crear la tabla de sesiones para registrar los inicios de sesión exitosos
+    create table session(
+      id serial primary key,       -- ID único y autoincremental para cada sesión
+      user_id int not null,        -- ID del usuario que inició la sesión
+      last_login timestamp         -- Fecha y hora del inicio de sesión
+    );
+   ```
