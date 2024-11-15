@@ -23,4 +23,47 @@ create table employee_projects (
     assigned_date timestamp default current_timestamp,          -- Fecha de asignación
     unique (employee_id, project_id)                            -- Evita duplicar asignaciones
 );
+
+-- Insertar empleados
+insert into employees (name, position) values
+('Juan Pérez', 'Desarrollador'),
+('María López', 'Diseñadora'),
+('Carlos Gómez', 'Gerente');
+
+
+-- Insertar proyectos
+insert into projects (project_name, start_date, end_date) values
+('Proyecto A', '2024-01-01', '2024-06-30'),
+('Proyecto B', '2024-02-01', '2024-12-31');
+
+-- Crear el Trigger
+
+create or replace function check_duplicate_assignment()
+returns trigger as $$
+  begin 
+	-- Verificar 
+    if exists (select 1 from employee_projects where employee_id = new.employee_id and project_id = new.project_id) then
+      raise exception 'El empleado ya está asignado a este proyecto.';
+    end if;
+  return new; -- Si no hay duplicados permite la inserción
+  end;
+$$ language plpgsql;
+
+-- Crear trigger
+create trigger trigger_check_duplicate_assigment
+before insert on employee_projects
+for each row
+execute function check_duplicate_assignment();
+
+select * from employees;
+select * from projects;
+
+insert into employee_projects(employee_id, project_id) values 
+(1, 1),
+(2, 2);
+
+select * from employee_projects;
+
+-- Asignación duplicada
+insert into employee_projects(employee_id, project_id) values (1,1);
 ```
