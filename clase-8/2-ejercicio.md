@@ -75,3 +75,119 @@ Implementar una solución en PostgreSQL que:
       last_login timestamp         -- Fecha y hora del inicio de sesión
     );
    ```
+
+## Genera el Error
+   ```sql
+    create or replace procedure user_login(user_name varchar, user_password varchar)
+    as $$
+    declare 
+      was_found integer;
+    begin
+      select count(*) into was_found from "user" where username=user_name and password = crypt(user_password, password);
+      if was_found = 0 then
+          begin
+        insert into session_failed(username, "when") values (user_name, now());
+            commit;
+            raise exception 'Credenciales incorrectas';
+          exception 
+          when others then
+                raise notice 'Error al registrar intento fallido %', sqlerrm;
+                  raise;
+          end;
+        end if;
+
+        -- actualizacion
+        -- update
+        begin
+          update "user" set last_login = now() where username = user_name;
+          if not found then
+              raise exception 'No se pudo actualizar last_login para el usuario %', username;
+          end if;
+        exception
+            when others then
+          raise notice 'Error durante la actualización de last_login: %', sqlerrm;
+              raise;
+        end;
+        raise notice 'Usuario encontrado y actualizado correctamente';
+    end;
+ $$ language plpgsql;
+```
+
+## Primera Solucion (Ricardo Rojas) sin uso de Else 
+
+```sql
+
+create or replace procedure user_login(user_name varchar, user_password varchar)
+as $$
+declare
+	was_found integer;
+begin
+	 select count(*) into was_found from "user" where username=user_name and password = crypt(user_password, password);
+	 if was_found = 0 then
+       begin
+		insert into session_failed(username, "when") values (user_name, now());
+       exception
+		   when others then
+           raise notice 'Error al registrar intento fallido %', sqlerrm;
+           raise;
+       end;
+       raise notice 'Credenciales incorrectas';
+       return;
+	end if;
+    -- actualizacion
+	    -- update
+	 begin
+	     update "user" set last_login = now() where username = user_name;
+	       if not found then
+	          raise exception 'No se pudo actualizar last_login para el usuario %', username;
+	       end if;
+	     exception
+	        when others then
+			  raise notice 'Error durante la actualización de last_login: %', sqlerrm;
+	          raise;
+	     end;
+	     raise notice 'Usuario encontrado y actualizado correctamente';
+end;
+$$ language plpgsql;
+
+```
+
+
+## Primera Solucion (Ricardo Rojas) con uso de Else 
+
+```sql
+create or replace procedure user_login(user_name varchar, user_password varchar)
+as $$
+declare
+	was_found integer;
+begin
+	 select count(*) into was_found from "user" where username=user_name and password = crypt(user_password, password);
+	 if was_found = 0 then
+       begin
+		insert into session_failed(username, "when") values (user_name, now());
+       exception
+		   when others then
+           raise notice 'Error al registrar intento fallido %', sqlerrm;
+           raise;
+       end;
+       raise notice 'Credenciales incorrectas';
+       return;
+	else
+	    -- actualizacion
+	    -- update
+	     begin
+	       update "user" set last_login = now() where username = user_name;
+	       if not found then
+	          raise exception 'No se pudo actualizar last_login para el usuario %', username;
+	       end if;
+	     exception
+	        when others then
+			  raise notice 'Error durante la actualización de last_login: %', sqlerrm;
+	          raise;
+	     end;
+	     raise notice 'Usuario encontrado y actualizado correctamente';
+	end if;
+end;
+$$ language plpgsql;
+
+```
