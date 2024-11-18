@@ -140,13 +140,21 @@ group by
 -- La empresa necesita calcular cuanto se ha vendido acumulativamente en las sucursales a lo largo del tiempo.
 -- OVER ???  
     
-select s.nombre
-	 , v.fecha
-     , v.monto_total
-     , sum(v.monto_total) over (partition by s.nombre order by v.fecha ) as ventas_acumuladas
-   from ventas v
-   join vendedores ve on ve.id_vendedor  = v.id_vendedor
-   join sucursales s  on s.id_sucursal  = ve.id_sucursal;
+SELECT s.nombre AS sucursal, 
+       ve.fecha,
+       SUM(ve.monto_total) OVER (PARTITION BY s.id_sucursal ORDER BY ve.fecha) AS ventas_acumuladas
+FROM sucursales s
+JOIN vendedores v ON s.id_sucursal = v.id_sucursal
+JOIN ventas ve ON v.id_vendedor = ve.id_vendedor;
+
+
+-- Productos mas vendidos
+SELECT p.nombre AS producto, 
+       SUM(ve.cantidad) AS total_vendidos,
+       DENSE_RANK() OVER (ORDER BY SUM(ve.cantidad) DESC) AS ranking
+FROM productos p
+JOIN ventas ve ON p.id_producto = ve.id_producto
+GROUP BY p.id_producto, p.nombre;
   
 
 ```
