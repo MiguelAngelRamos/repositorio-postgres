@@ -30,6 +30,41 @@ La base de datos se llama **educacion_digital** con las siguientes tablas normal
 
 
 ```sql
+-- Tabla estudiantes
+CREATE TABLE estudiantes (
+    id_estudiante SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    edad INT NOT NULL
+);
+
+-- Tabla cursos
+CREATE TABLE cursos (
+    id_curso SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    duracion_horas INT NOT NULL
+);
+
+-- Tabla instructores
+CREATE TABLE instructores (
+    id_instructor SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    especialidad VARCHAR(50) NOT NULL
+);
+
+-- Tabla inscripciones
+CREATE TABLE inscripciones (
+    id_inscripcion SERIAL PRIMARY KEY,
+    id_estudiante INT NOT NULL REFERENCES estudiantes(id_estudiante),
+    id_curso INT NOT NULL REFERENCES cursos(id_curso),
+    id_instructor INT NOT NULL REFERENCES instructores(id_instructor),
+    fecha DATE NOT NULL,
+    calificacion NUMERIC(5, 2)
+);
+
+
 INSERT INTO estudiantes (nombre, apellido, edad) VALUES
 ('Carlos', 'Pérez', 22), 
 ('Ana', 'Gómez', 24), 
@@ -173,5 +208,4 @@ INSERT INTO inscripciones (id_estudiante, id_curso, id_instructor, fecha, califi
 (10, 2, 2, '2024-01-06', 85.0),
 (10, 4, 4, '2024-01-11', 90.0),
 (10, 9, 3, '2024-01-16', 88.5);
-
 ```
