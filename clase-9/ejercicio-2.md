@@ -209,3 +209,94 @@ INSERT INTO inscripciones (id_estudiante, id_curso, id_instructor, fecha, califi
 (10, 4, 4, '2024-01-11', 90.0),
 (10, 9, 3, '2024-01-16', 88.5);
 ```
+
+## Consultas
+
+```sql
+
+
+-- Consulta Total de calificaciones acumuladas y ranking estudiante
+
+select
+	e.nombre as estudiante,
+	e.apellido,
+	sum(i.calificacion) as total_calificaciones,
+	rank() over (order by sum(i.calificacion) desc ) as ranking
+from
+	estudiantes e
+join inscripciones i on
+	e.id_estudiante = i.id_estudiante
+group by e.id_estudiante, e.nombre, e.apellido;
+
+-- Consulta 2 : Obtener el Promedio de calificaciones y distribucion por cuartiles
+select
+	e.nombre as estudiante,
+	e.apellido,
+	avg(i.calificacion) as promedio_calificaciones,
+	NTILE(4) over (order by avg(i.calificacion) desc ) as cuartil
+from
+	estudiantes e
+join inscripciones i on e.id_estudiante = i.id_estudiante
+group by e.id_estudiante, e.nombre, e.apellido;
+
+-- Consulta 3 Popularidad del curso
+select
+	c.nombre,
+	count(i.id_inscripcion) as total_inscritos,
+	dense_rank() over (order by count(i.id_inscripcion) desc) as ranking
+from
+	cursos c
+join inscripciones i on
+	c.id_curso = i.id_curso
+group by c.id_curso, c.nombre;
+
+
+select 	c.nombre as curso_nombre,
+		count(i.id_curso) cantidad_inscripciones,
+		dense_rank() over (order by count(i.id_curso) desc) as popularidad_ranking,
+		ntile(4) over (order by count(i.id_curso) desc) as popularidad_cuartil
+from cursos c
+join inscripciones i ON c.id_curso = i.id_curso
+group by curso_nombre;
+ 
+-- Ricardo Rojas
+ 
+select
+	c.nombre,
+	count(i.id_estudiante) total_inscripcion,
+	dense_rank() over (order by count(i.id_estudiante) desc ) as ranking
+from
+	cursos c
+join inscripciones i on
+	c.id_curso = i.id_curso
+group by c.nombre;
+
+-- Tome el numero de cursos tomados y ranking por estudiante.
+-- Nombre   Apellido  Cursos tomados          Ranking
+-- Richard  Stallman        10                    1 
+-- Viky     Ramirez         8                     2
+
+
+
+-- Ricardo Rojas
+-- Tome el numero de cursos tomado y rankin por estudiante
+-- Nombre apellido cursos_tomados ranking
+-- cursos_tomados ranking
+select 	e.apellido || ', ' ||  e.nombre as estudiante_nombre,
+		count(i.id_inscripcion) as cursos_tomados,
+		dense_rank() over (order by count(i.id_inscripcion) desc) as ranking
+from estudiantes e
+join inscripciones i ON e.id_estudiante = i.id_estudiante
+group by estudiante_nombre;
+
+SELECT 
+    e.nombre AS estudiante, 
+    e.apellido,
+    COUNT(i.id_curso) AS cursos_tomados,
+    DENSE_RANK() OVER (ORDER BY COUNT(i.id_curso) DESC) AS ranking
+FROM estudiantes e
+JOIN inscripciones i ON e.id_estudiante = i.id_estudiante
+GROUP BY e.id_estudiante, e.nombre, e.apellido;
+
+
+```
