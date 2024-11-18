@@ -119,5 +119,4 @@ INSERT INTO ventas (id_producto, id_vendedor, fecha, cantidad, monto_total) VALU
 (8, 4, '2024-11-28', 6, 7200.00),  -- Audífonos T, Sofía
 (9, 5, '2024-11-29', 4, 10000.00), -- Impresora U, Juan
 (10, 6, '2024-11-30', 5, 7500.00); -- Router V, María
-
 ```
