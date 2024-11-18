@@ -120,3 +120,33 @@ INSERT INTO ventas (id_producto, id_vendedor, fecha, cantidad, monto_total) VALU
 (9, 5, '2024-11-29', 4, 10000.00), -- Impresora U, Juan
 (10, 6, '2024-11-30', 5, 7500.00); -- Router V, María
 ```
+
+```sql
+
+-- Clasificación de vendedores y ventas totales
+select
+    v.nombre as vendedor,
+    v.apellido as apellido,
+	sum(ve.monto_total) as total_ventas,
+	rank() over (order by sum(ve.monto_total) desc) as ranking
+from
+	vendedores v
+join ventas ve on
+	v.id_vendedor = ve.id_vendedor
+group by 
+     v.id_vendedor, v.nombre, v.apellido;
+
+-- Total Acumulado por sucursal
+-- La empresa necesita calcular cuanto se ha vendido acumulativamente en las sucursales a lo largo del tiempo.
+-- OVER ???  
+    
+select s.nombre
+	 , v.fecha
+     , v.monto_total
+     , sum(v.monto_total) over (partition by s.nombre order by v.fecha ) as ventas_acumuladas
+   from ventas v
+   join vendedores ve on ve.id_vendedor  = v.id_vendedor
+   join sucursales s  on s.id_sucursal  = ve.id_sucursal;
+  
+
+```
