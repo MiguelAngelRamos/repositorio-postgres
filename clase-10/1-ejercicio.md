@@ -88,4 +88,19 @@ select
     eficiencia desc;
 
 
+SELECT
+    departamento,
+    ROUND(AVG(eficiencia), 4) AS promedio_eficiencia,
+    ROUND(STDDEV_SAMP(eficiencia), 4) AS desviacion_estandar
+FROM (
+    SELECT
+        departamento,
+        CAST(proyectos_completados AS DECIMAL) / horas_trabajadas AS eficiencia
+    FROM
+        empleado
+) sub
+GROUP BY
+    departamento;
+
+
 ```
