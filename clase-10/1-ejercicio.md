@@ -39,4 +39,53 @@ INSERT INTO empleado (nombre, departamento, proyectos_completados, horas_trabaja
 ('Sandra Gil', 'Ventas', 9, 120),
 ('Alberto Cruz', 'Desarrollo', 18, 170);
 
+
+--- DESARROLLO
+
+-- Calcular la Eficiencia de cada Empleado
+-- select (cast(9 as DECIMAL)/5);
+
+select
+	empleado_id,
+	nombre,
+	departamento,
+	proyectos_completados,
+	horas_trabajadas,
+	round(cast(proyectos_completados as decimal) / horas_trabajadas, 4) as eficiencia
+from
+	empleado;
+
+-- Rango de empleados por Proyectos completados ('RANK')
+select 
+	nombre,
+	proyectos_completados,
+	rank() over (order by proyectos_completados desc ) as rango
+from
+	empleado;
+
+select * from empleado;
+
+-- Horas trabajadas 
+select
+	nombre,
+	horas_trabajadas,
+	dense_rank() over (order by horas_trabajadas) as rango_denso
+from
+	empleado;
+
+-- Divida a los empleados en cuartiles ntile() y de acuerdo al calculo de eficiencia
+
+select 
+  nombre,
+  eficiencia,
+  ntile(4) over (order by eficiencia desc) as cuartil
+ from (
+ 	select
+		nombre,
+		round(cast(proyectos_completados as decimal) / horas_trabajadas, 4) as eficiencia
+	from empleado) sub
+ order by
+    eficiencia desc;
+
+
 ```
